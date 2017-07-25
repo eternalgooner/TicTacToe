@@ -30,6 +30,7 @@ public class PlayGameActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "entering onCreate() in PlayGameActivity");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play_game);
 
@@ -62,6 +63,7 @@ public class PlayGameActivity extends AppCompatActivity {
     }
 
     private void startGame(int gameType) {
+        Log.d(TAG, "entering startGame()");
          if(gameType == ONE_PLAYER){
              startOnePlayerGame();
          }else if(gameType == TWO_PLAYER){
@@ -74,9 +76,8 @@ public class PlayGameActivity extends AppCompatActivity {
     }
 
     private void startTwoPlayerGame() {
+        Log.d(TAG, "entering startPlayerTwoGame() in PlayGameActivity");
         game = new Game(TWO_PLAYER);
-
-
     }
 
     public boolean onOptionsItemSelected(MenuItem item){
@@ -117,7 +118,7 @@ public class PlayGameActivity extends AppCompatActivity {
     private void checkForWinner() {
         Log.d(TAG, "checking for winner");
         String result = game.isThereAWinner();
-        if(result != null){
+        if(result.equals("Player 1") || result.equals("Player 2")){
             Toast.makeText(getApplicationContext(), "Winner is: " + result, Toast.LENGTH_SHORT).show();
         }
     }

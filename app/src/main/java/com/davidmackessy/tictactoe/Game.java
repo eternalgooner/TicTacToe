@@ -93,12 +93,12 @@ public class Game {
                 winner = playerOne;
                 Log.d(TAG, "Player set match!! - winner is playerOne");
             }else if(playerOneTileSet.size() > 3){
-                if(isWinningCombintationInPlayerSet()){
+                if(isWinningCombintationInPlayerSet(playerOneTileSet)){
                     winner = playerOne;
                     Log.d(TAG, "Player set match!! - winner is playerOne");
+                }else{
+                    Log.d(TAG, "no match found when more than 3 numbers in player set");
                 }
-            }else{
-                Log.d(TAG, "no match found");
             }
         }else if(player == 2){
             Log.d(TAG, "checking if player 2 won. Player 2 set is: " + playerTwoTileSet.toString());
@@ -106,20 +106,19 @@ public class Game {
                 winner = playerTwo;
                 Log.d(TAG, "Player set match!! - winner is playerTwo");
             }else if(playerTwoTileSet.size() > 3){
-                if(isWinningCombintationInPlayerSet()){
+                if(isWinningCombintationInPlayerSet(playerTwoTileSet)){
                     winner = playerTwo;
                     Log.d(TAG, "Player set match!! - winner is playerTwo");
                 }else{
-                Log.d(TAG, "no match found");
-
+                    Log.d(TAG, "no match found when more than 3 numbers in player set");
                 }
             }
         }
     }
 
-    private boolean isWinningCombintationInPlayerSet() {
+    private boolean isWinningCombintationInPlayerSet(Set<Integer> playerSet) {
         for(Set winningCombination : winningCombinations){
-            if(playerOneTileSet.contains(winningCombination)){
+            if(playerSet.containsAll(winningCombination)){
                 return true;
             }
         }
