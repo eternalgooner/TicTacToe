@@ -10,6 +10,10 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 public class PlayGameActivity extends AppCompatActivity {
 
     private int gameType;
@@ -33,7 +37,58 @@ public class PlayGameActivity extends AppCompatActivity {
         Log.d(TAG, "entering onCreate() in PlayGameActivity");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play_game);
+        createTilesAndAddClickListener();
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        gameType = getIntent().getIntExtra("gameType", 0);
+        Toast.makeText(getApplicationContext(), "Game type is: " + gameType, Toast.LENGTH_SHORT).show();
+       if(savedInstanceState == null){
+           startGame(gameType);
+       }else{
+           game = (Game) savedInstanceState.getSerializable("gameState");
+           isPlayerOneGo = savedInstanceState.getBoolean("isPlayerOneGo");
+           redrawBoard();
+       }
+    }
 
+    private void redrawBoard() {
+        for(Integer tile : game.getPlayerOneTileSet()){
+            Log.d(TAG, "in redrawBoard, tile no. is: " + tile);
+            redrawPlayerOneTiles(tile);
+        }
+
+        for(Integer tile : game.getPlayerTwoTileSet()){
+            Log.d(TAG, "in redrawBoard, tile no. is: " + tile);
+            redrawPlayerTwoTiles(tile);
+        }
+    }
+
+    private void redrawPlayerTwoTiles(Integer tile) {
+        Log.d(TAG, "setting shape (player 2) on tile from restoreState");
+        getCorrectPlayerTile(tile).setBackground(getXs());
+    }
+
+    private void redrawPlayerOneTiles(Integer tile) {
+        Log.d(TAG, "setting shape (player 1) on tile from restoreState");
+        getCorrectPlayerTile(tile).setBackground(getOs());
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        Log.d(TAG, "in onSaveInstanceState");
+        super.onSaveInstanceState(outState);
+        outState.putSerializable("gameState", game);
+        outState.putBoolean("isPlayerOneGo", isPlayerOneGo);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        Log.d(TAG, "in onRestoreInstanceState");
+        super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    private void createTilesAndAddClickListener() {
+        Log.d(TAG, "entering createTilesAndAddClickListener to instantiate all tiles & add listeners");
         tile1 = (ImageView) findViewById(R.id.tile_1);
         addClickListener(tile1);
         tile2 = (ImageView) findViewById(R.id.tile_2);
@@ -52,14 +107,6 @@ public class PlayGameActivity extends AppCompatActivity {
         addClickListener(tile8);
         tile9 = (ImageView) findViewById(R.id.tile_9);
         addClickListener(tile9);
-
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-
-        gameType = getIntent().getIntExtra("gameType", 0);
-        Toast.makeText(getApplicationContext(), "Game type is: " + gameType, Toast.LENGTH_SHORT).show();
-
-        startGame(gameType);
     }
 
     private void startGame(int gameType) {
@@ -72,7 +119,14 @@ public class PlayGameActivity extends AppCompatActivity {
     }
 
     private void startOnePlayerGame() {
-
+//        if(game.getGameTilesSelectedSet().containsAll(Arrays.asList(1,2,3,4,5,6,7,8,9))){
+//            EndGameDialogFragment dialog = new EndGameDialogFragment();
+//            dialog.setCancelable(false);
+//            Bundle bundle = new Bundle();
+//            bundle.putInt("result", 0);
+//            dialog.setArguments(bundle);
+//            dialog.show(getFragmentManager(), "endGameDialog");
+//        }
     }
 
     private void startTwoPlayerGame() {
@@ -94,14 +148,30 @@ public class PlayGameActivity extends AppCompatActivity {
                     isPlayerOneGo = false;
                     setShapeOnTile(v);
                     checkForWinner();
+                    checkIfDraw();
+
                 }else if(!isPlayerOneGo && isTileSelectedAlready(v)){
                     game.playerTwoGo(getTileChoice(v));
                     isPlayerOneGo = true;
                     setShapeOnTile(v);
                     checkForWinner();
+                    checkIfDraw();
                 }
             }
         });
+    }
+
+    private void checkIfDraw() {
+        Log.d(TAG, "in check if draw");
+        if(game.getGameTilesSelectedSet().containsAll(Arrays.asList(1,2,3,4,5,6,7,8,9)) && !game.isGameOver()){
+            Log.d(TAG, "draw conditions met, setting draw dialog");
+            EndGameDialogFragment dialog = new EndGameDialogFragment();
+            dialog.setCancelable(false);
+            Bundle bundle = new Bundle();
+            bundle.putString("result", "Draw game");
+            dialog.setArguments(bundle);
+            dialog.show(getFragmentManager(), "endGameDialog");
+        }
     }
 
     private boolean isTileSelectedAlready(View view) {
@@ -119,7 +189,23 @@ public class PlayGameActivity extends AppCompatActivity {
         Log.d(TAG, "checking for winner");
         String result = game.isThereAWinner();
         if(result.equals("Player 1") || result.equals("Player 2")){
-            Toast.makeText(getApplicationContext(), "Winner is: " + result, Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "winner found - - : " + result);
+            //Toast.makeText(getApplicationContext(), "Winner is: " + result, Toast.LENGTH_SHORT).show();
+            EndGameDialogFragment dialog = new EndGameDialogFragment();
+            dialog.setCancelable(false);
+            Bundle bundle = new Bundle();
+            if(game.isThereAWinner().equals("Player 1")){
+                Log.d(TAG, "setting player 1 as winner in bundle for dialog");
+                bundle.putString("result", "Player 1 wins!!");
+            }else if(game.isThereAWinner().equals("Player 2")){
+                Log.d(TAG, "setting player 2 as winner in bundle for dialog");
+                bundle.putString("result", "Player 2 wins!!");
+            }
+            Log.d(TAG, "show winner dialog");
+            dialog.setArguments(bundle);
+            dialog.show(getFragmentManager(), "endGameDialog");
+        }else{
+            Log.d(TAG, "no winner yet...");
         }
     }
 
@@ -161,6 +247,45 @@ public class PlayGameActivity extends AppCompatActivity {
     private void setShapeOnTile(View v) {
         Log.d(TAG, "setting shape on tile");
         v.setBackground(getNextShape());
+    }
+
+//    private void setShapeOnTile(int tile) {
+//        Log.d(TAG, "setting shape on tile from restoreState");
+//        getCorrectPlayerTile(tile).setBackground(getOs());
+//    }
+
+    private Drawable getOs() {
+        return getDrawable(R.drawable.o);
+    }
+
+    private Drawable getXs() {
+        return getDrawable(R.drawable.x);
+    }
+
+    private ImageView getCorrectPlayerTile(int tile) {
+        switch (tile){
+            case 1:
+                return tile1;
+            case 2:
+                return tile2;
+            case 3:
+                return tile3;
+            case 4:
+                return tile4;
+            case 5:
+                return tile5;
+            case 6:
+                return tile6;
+            case 7:
+                return tile7;
+            case 8:
+                return tile8;
+            case 9:
+                return tile9;
+            default:
+                Log.d(TAG, "no match found, returning null");
+                return null;
+        }
     }
 
     private Drawable getNextShape(){

@@ -2,6 +2,7 @@ package com.davidmackessy.tictactoe;
 
 import android.util.Log;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -10,7 +11,7 @@ import java.util.Set;
  * Created by David on 7/25/2017.
  */
 
-public class Game {
+public class Game implements Serializable{
 
     private Set<Integer> gameTilesSelectedSet;
     //private Set<Integer> fullTileSet = new HashSet<>(Arrays.asList(1,2,3,4,5,6,7,8,9));
@@ -23,6 +24,7 @@ public class Game {
     private JustPlayed justPlayed;
     private boolean isOnePlayerGame;
     private String winner;
+    private boolean isGameOver;
     private static final String TAG = Game.class.getSimpleName();
 
     public Game(int gameType) {
@@ -91,10 +93,12 @@ public class Game {
             Log.d(TAG, "checking if player 1 won. Player 1 set is: " + playerOneTileSet.toString());
             if(winningCombinations.contains(playerOneTileSet)){
                 winner = playerOne;
+                isGameOver = true;
                 Log.d(TAG, "Player set match!! - winner is playerOne");
             }else if(playerOneTileSet.size() > 3){
                 if(isWinningCombintationInPlayerSet(playerOneTileSet)){
                     winner = playerOne;
+                    isGameOver= true;
                     Log.d(TAG, "Player set match!! - winner is playerOne");
                 }else{
                     Log.d(TAG, "no match found when more than 3 numbers in player set");
@@ -104,10 +108,12 @@ public class Game {
             Log.d(TAG, "checking if player 2 won. Player 2 set is: " + playerTwoTileSet.toString());
             if(winningCombinations.contains(playerTwoTileSet)){
                 winner = playerTwo;
+                isGameOver = true;
                 Log.d(TAG, "Player set match!! - winner is playerTwo");
             }else if(playerTwoTileSet.size() > 3){
                 if(isWinningCombintationInPlayerSet(playerTwoTileSet)){
                     winner = playerTwo;
+                    isGameOver = true;
                     Log.d(TAG, "Player set match!! - winner is playerTwo");
                 }else{
                     Log.d(TAG, "no match found when more than 3 numbers in player set");
@@ -150,5 +156,29 @@ public class Game {
 
     public boolean isOnePlayerGame() {
         return isOnePlayerGame;
+    }
+
+    public Set<Integer> getPlayerOneTileSet() {
+        return playerOneTileSet;
+    }
+
+    public Set<Integer> getPlayerTwoTileSet() {
+        return playerTwoTileSet;
+    }
+
+    public void setGameTilesSelectedSet(Set<Integer> gameTilesSelectedSet) {
+        this.gameTilesSelectedSet = gameTilesSelectedSet;
+    }
+
+    public void setPlayerOneTileSet(Set<Integer> playerOneTileSet) {
+        this.playerOneTileSet = playerOneTileSet;
+    }
+
+    public void setPlayerTwoTileSet(Set<Integer> playerTwoTileSet) {
+        this.playerTwoTileSet = playerTwoTileSet;
+    }
+
+    public boolean isGameOver() {
+        return isGameOver;
     }
 }
