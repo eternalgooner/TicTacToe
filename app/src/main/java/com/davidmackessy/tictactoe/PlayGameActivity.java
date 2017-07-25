@@ -119,14 +119,9 @@ public class PlayGameActivity extends AppCompatActivity {
     }
 
     private void startOnePlayerGame() {
-//        if(game.getGameTilesSelectedSet().containsAll(Arrays.asList(1,2,3,4,5,6,7,8,9))){
-//            EndGameDialogFragment dialog = new EndGameDialogFragment();
-//            dialog.setCancelable(false);
-//            Bundle bundle = new Bundle();
-//            bundle.putInt("result", 0);
-//            dialog.setArguments(bundle);
-//            dialog.show(getFragmentManager(), "endGameDialog");
-//        }
+        //TODO get intent extra which will be the computer level
+        //from shared preferences
+        //shared pref also dictates who goes first - player 1 or computer or alternate
     }
 
     private void startTwoPlayerGame() {
