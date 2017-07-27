@@ -1,10 +1,12 @@
 package com.davidmackessy.tictactoe;
 
+import android.os.Handler;
 import android.util.Log;
 
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 /**
@@ -16,6 +18,7 @@ public class Game implements Serializable{
     private Set<Integer> gameTilesSelectedSet;
     //private Set<Integer> fullTileSet = new HashSet<>(Arrays.asList(1,2,3,4,5,6,7,8,9));
     private Set<Set<Integer>> winningCombinations;
+    private Set<Integer> gameTilesLeft;
     private Set<Integer> playerOneTileSet;
     private Set<Integer> playerTwoTileSet;
     private String playerOne = "Player 1";
@@ -25,6 +28,7 @@ public class Game implements Serializable{
     private boolean isOnePlayerGame;
     private String winner;
     private boolean isGameOver;
+    private int lastComputerChoice;
     private static final String TAG = Game.class.getSimpleName();
 
     public Game(int gameType) {
@@ -33,8 +37,9 @@ public class Game implements Serializable{
         initWinningCombinations();
         if(gameType == 1){
             isOnePlayerGame = true;
+            playerTwo = "Computer";
         }
-
+        gameTilesLeft = new HashSet<>(Arrays.asList(1,2,3,4,5,6,7,8,9));
         playerOneTileSet = new HashSet<>();
         playerTwoTileSet = new HashSet<>();
     }
@@ -67,10 +72,18 @@ public class Game implements Serializable{
             playerOneTileSet.add(tileChoice);
             gameTilesSelectedSet.add(tileChoice);
             Log.d(TAG, "number: " + tileChoice + " not in set, added now. Set now contains: " + playerOneTileSet.toString());
+            removeTileFromGameTilesLeft(tileChoice);
             checkIfPlayerWins(1);
             return true;
         }
         return false;
+    }
+
+    private void removeTileFromGameTilesLeft(int tileChoice) {
+        Log.d(TAG, "in removeTileFromGameTilesLeft & removing: " + tileChoice);
+        Log.d(TAG, "gameTilesLeft before: " + gameTilesLeft.toString());
+        gameTilesLeft.remove(tileChoice);
+        Log.d(TAG, "gameTilesLeft after: " + gameTilesLeft.toString());
     }
 
     public boolean playerTwoGo(int tileChoice){
@@ -86,6 +99,53 @@ public class Game implements Serializable{
             return true;
         }
         return false;
+    }
+    //TODO when computer wins it doesn't highlight the tiles & also if draw, game crashes
+    public boolean computerGo(){
+        Log.d(TAG, "in computerGo()");
+        simulateDelay();
+        int randomChoice = getNextComputerChoice();
+        lastComputerChoice = randomChoice;
+        justPlayed = JustPlayed.COMPUTER;
+        if(playerTwoTileSet.contains(randomChoice)){
+            Log.d(TAG, "number: " + randomChoice + "already in set, not added. Set contains:" + playerTwoTileSet.toString());
+            return false;
+        }else if(!gameTilesSelectedSet.contains(randomChoice)){
+            playerTwoTileSet.add(randomChoice);
+            gameTilesSelectedSet.add(randomChoice);
+            Log.d(TAG, "number: " + randomChoice + " not in set, added now. Set now contains: " + playerTwoTileSet.toString());
+            removeTileFromGameTilesLeft(randomChoice);
+            checkIfPlayerWins(2);
+            return true;
+        }
+        return false;
+    }
+
+    private void simulateDelay() {
+        Log.d(TAG, "in simulateDelay()");
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //do nothing, simulate 2 seconds
+            }
+        }, 2000);
+        Log.d(TAG, "leaving simulateDelay()");
+    }
+
+    private int getNextComputerChoice() {
+        Random random = new Random();
+        int randomInt = random.nextInt(gameTilesLeft.size());
+        int returningInt =  getRandomIntFromRemaingInts(randomInt);
+        Log.d(TAG, "in getNextComputerChoice, returning number: " + returningInt);
+        return  returningInt;
+    }
+
+    private int getRandomIntFromRemaingInts(int randomInt) {
+        while(gameTilesLeft.iterator().hasNext()){
+            return gameTilesLeft.iterator().next();
+        }
+        return 0;
     }
 
     private void checkIfPlayerWins(int player) {
@@ -184,5 +244,9 @@ public class Game implements Serializable{
 
     public Set<Set<Integer>> getWinningCombinations() {
         return winningCombinations;
+    }
+
+    public int getLastComputerChoice() {
+        return lastComputerChoice;
     }
 }

@@ -148,6 +148,8 @@ public class PlayGameActivity extends AppCompatActivity {
         //TODO get intent extra which will be the computer level
         //from shared preferences
         //shared pref also dictates who goes first - player 1 or computer or alternate
+        Log.d(TAG, "entering startPlayerTwoGame() in PlayGameActivity");
+        game = new Game(ONE_PLAYER);
     }
 
     private void startTwoPlayerGame() {
@@ -170,6 +172,14 @@ public class PlayGameActivity extends AppCompatActivity {
                     setShapeOnTile(v);
                     checkForWinner();
                     checkIfDraw();
+                    if(gameType == 1){
+                        if(game.computerGo()){
+                            isPlayerOneGo = true;
+                            setShapeOnTile(getCorrectPlayerTile(game.getLastComputerChoice()));
+                            checkForWinner();
+                            checkIfDraw();
+                        }
+                    }
 
                 }else if(!isPlayerOneGo && isTileSelectedAlready(v)){
                     game.playerTwoGo(getTileChoice(v));
