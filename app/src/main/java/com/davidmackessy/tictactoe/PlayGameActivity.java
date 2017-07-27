@@ -4,6 +4,7 @@ import android.graphics.drawable.Drawable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,6 +29,15 @@ public class PlayGameActivity extends AppCompatActivity {
     private ImageView tile7;
     private ImageView tile8;
     private ImageView tile9;
+    private CardView cv1;
+    private CardView cv2;
+    private CardView cv3;
+    private CardView cv4;
+    private CardView cv5;
+    private CardView cv6;
+    private CardView cv7;
+    private CardView cv8;
+    private CardView cv9;
     private Game game;
     private boolean isPlayerOneGo = true;
     private static final String TAG = PlayGameActivity.class.getSimpleName();
@@ -38,6 +48,7 @@ public class PlayGameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play_game);
         createTilesAndAddClickListener();
+        assignCardViews();
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         gameType = getIntent().getIntExtra("gameType", 0);
@@ -49,6 +60,18 @@ public class PlayGameActivity extends AppCompatActivity {
            isPlayerOneGo = savedInstanceState.getBoolean("isPlayerOneGo");
            redrawBoard();
        }
+    }
+
+    private void assignCardViews() {
+        cv1 = (CardView) findViewById(R.id.cv1);
+        cv2 = (CardView) findViewById(R.id.cv2);
+        cv3 = (CardView) findViewById(R.id.cv3);
+        cv4 = (CardView) findViewById(R.id.cv4);
+        cv5 = (CardView) findViewById(R.id.cv5);
+        cv6 = (CardView) findViewById(R.id.cv6);
+        cv7 = (CardView) findViewById(R.id.cv7);
+        cv8 = (CardView) findViewById(R.id.cv8);
+        cv9 = (CardView) findViewById(R.id.cv9);
     }
 
     private void redrawBoard() {
@@ -196,12 +219,19 @@ public class PlayGameActivity extends AppCompatActivity {
                 Log.d(TAG, "setting player 2 as winner in bundle for dialog");
                 bundle.putString("result", "Player 2 wins!!");
             }
+            highLightWinningTiles();
             Log.d(TAG, "show winner dialog");
             dialog.setArguments(bundle);
             dialog.show(getFragmentManager(), "endGameDialog");
         }else{
             Log.d(TAG, "no winner yet...");
         }
+    }
+
+    private void highLightWinningTiles() {
+        cv1.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        cv5.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        cv9.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
     }
 
     private int getTileChoice(View view) {
@@ -241,7 +271,7 @@ public class PlayGameActivity extends AppCompatActivity {
 
     private void setShapeOnTile(View v) {
         Log.d(TAG, "setting shape on tile");
-        v.setBackground(getNextShape());
+        v.setForeground(getNextShape());
     }
 
 //    private void setShapeOnTile(int tile) {
@@ -250,11 +280,11 @@ public class PlayGameActivity extends AppCompatActivity {
 //    }
 
     private Drawable getOs() {
-        return getDrawable(R.drawable.o);
+        return getDrawable(R.drawable._o);
     }
 
     private Drawable getXs() {
-        return getDrawable(R.drawable.x);
+        return getDrawable(R.drawable._x);
     }
 
     private ImageView getCorrectPlayerTile(int tile) {
@@ -285,9 +315,9 @@ public class PlayGameActivity extends AppCompatActivity {
 
     private Drawable getNextShape(){
         if(game.getJustPlayed() == Game.JustPlayed.PLAYER_ONE.PLAYER_ONE){
-            return getDrawable(R.drawable.o);
+            return getDrawable(R.drawable._o);
         }else{
-            return getDrawable(R.drawable.x);
+            return getDrawable(R.drawable._x);
         }
     }
 }
