@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 public class PlayGameActivity extends AppCompatActivity {
@@ -78,11 +79,13 @@ public class PlayGameActivity extends AppCompatActivity {
         for(Integer tile : game.getPlayerOneTileSet()){
             Log.d(TAG, "in redrawBoard, tile no. is: " + tile);
             redrawPlayerOneTiles(tile);
+            highLightWinningTiles();
         }
 
         for(Integer tile : game.getPlayerTwoTileSet()){
             Log.d(TAG, "in redrawBoard, tile no. is: " + tile);
             redrawPlayerTwoTiles(tile);
+            highLightWinningTiles();
         }
     }
 
@@ -229,9 +232,88 @@ public class PlayGameActivity extends AppCompatActivity {
     }
 
     private void highLightWinningTiles() {
-        cv1.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-        cv5.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-        cv9.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        Log.d(TAG, "entering highlightWinningTiles()");
+        if(game.isThereAWinner().equals("Player 1")){
+            Log.d(TAG, "highlight player 1 tiles");
+            if(game.getPlayerOneTileSet().size() == 3){
+                Log.d(TAG, "highlight player 1 tiles  = 3");
+                for(int tile : game.getPlayerOneTileSet()){
+                    setBackgroundColourOnTile(tile);
+                }
+            }else{
+                highLightTilesIfMoreThan3(1);
+            }
+        }else if(game.isThereAWinner().equals("Player 2")){
+            Log.d(TAG, "highlight player 2 tiles");
+            if(game.getPlayerTwoTileSet().size() == 3){
+                Log.d(TAG, "highlight player 2 tiles = 3");
+                for(int tile : game.getPlayerTwoTileSet()){
+                    setBackgroundColourOnTile(tile);
+                }
+            }else{
+                highLightTilesIfMoreThan3(2);
+            }
+        }
+    }
+
+    private void highLightTilesIfMoreThan3(int player) {
+        Log.d(TAG, "entering highLightTilesIfMoreThan3()");
+        Log.d(TAG, "size of sets to check through is: " +  game.getWinningCombinations().size());
+        Set<Integer> playerSetToCheck;
+        if(player == 1){
+            playerSetToCheck = game.getPlayerOneTileSet();
+        }else{
+            playerSetToCheck = game.getPlayerTwoTileSet();
+        }
+
+        for(Set set : game.getWinningCombinations()){
+            Log.d(TAG, "entering for loop going through winning combo sets");
+            Iterator iterator = set.iterator();
+            Log.d(TAG, "player tile set is: " + playerSetToCheck.toString());
+            Log.d(TAG, "winnning combo tile set is: " + set.toString());
+            if(playerSetToCheck.containsAll(set)){
+                Log.d(TAG, "match found, player set contains winning combo in highlight method");
+                while(iterator.hasNext()){
+                    setBackgroundColourOnTile((int)iterator.next());
+                }
+                return;
+            }
+        }
+//        if(game.getWinningCombinations()){
+//
+//        }
+    }
+
+    private void setBackgroundColourOnTile(int tile) {
+        switch (tile){
+            case 1:
+                cv1.setBackgroundColor(getResources().getColor(R.color.colorPrimary, getTheme()));
+                break;
+            case 2:
+                cv2.setBackgroundColor(getResources().getColor(R.color.colorPrimary, getTheme()));
+                break;
+            case 3:
+                cv3.setBackgroundColor(getResources().getColor(R.color.colorPrimary, getTheme()));
+                break;
+            case 4:
+                cv4.setBackgroundColor(getResources().getColor(R.color.colorPrimary, getTheme()));
+                break;
+            case 5:
+                cv5.setBackgroundColor(getResources().getColor(R.color.colorPrimary, getTheme()));
+                break;
+            case 6:
+                cv6.setBackgroundColor(getResources().getColor(R.color.colorPrimary, getTheme()));
+                break;
+            case 7:
+                cv7.setBackgroundColor(getResources().getColor(R.color.colorPrimary, getTheme()));
+                break;
+            case 8:
+                cv8.setBackgroundColor(getResources().getColor(R.color.colorPrimary, getTheme()));
+                break;
+            case 9:
+                cv9.setBackgroundColor(getResources().getColor(R.color.colorPrimary, getTheme()));
+                break;
+        }
     }
 
     private int getTileChoice(View view) {

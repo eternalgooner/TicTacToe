@@ -181,4 +181,8 @@ public class Game implements Serializable{
     public boolean isGameOver() {
         return isGameOver;
     }
+
+    public Set<Set<Integer>> getWinningCombinations() {
+        return winningCombinations;
+    }
 }
