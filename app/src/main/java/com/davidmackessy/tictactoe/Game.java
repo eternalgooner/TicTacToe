@@ -102,7 +102,7 @@ public class Game implements Serializable{
     }
     //TODO when computer wins it doesn't highlight the tiles & also if draw, game crashes
     public boolean computerGo(){
-        Log.d(TAG, "in computerGo()");
+        Log.d(TAG, "in computerGo(), isGameOver = " + isGameOver);
         simulateDelay();
         int randomChoice = getNextComputerChoice();
         lastComputerChoice = randomChoice;
@@ -248,5 +248,9 @@ public class Game implements Serializable{
 
     public int getLastComputerChoice() {
         return lastComputerChoice;
+    }
+
+    public void setGameOver(boolean gameOver) {
+        isGameOver = gameOver;
     }
 }

@@ -148,6 +148,8 @@ public class PlayGameActivity extends AppCompatActivity {
         //TODO get intent extra which will be the computer level
         //from shared preferences
         //shared pref also dictates who goes first - player 1 or computer or alternate
+        //computer level
+        //stats show win % v computer
         Log.d(TAG, "entering startPlayerTwoGame() in PlayGameActivity");
         game = new Game(ONE_PLAYER);
     }
@@ -172,7 +174,7 @@ public class PlayGameActivity extends AppCompatActivity {
                     setShapeOnTile(v);
                     checkForWinner();
                     checkIfDraw();
-                    if(gameType == 1){
+                    if(gameType == 1 && !game.isGameOver()){
                         if(game.computerGo()){
                             isPlayerOneGo = true;
                             setShapeOnTile(getCorrectPlayerTile(game.getLastComputerChoice()));
@@ -196,6 +198,7 @@ public class PlayGameActivity extends AppCompatActivity {
         Log.d(TAG, "in check if draw");
         if(game.getGameTilesSelectedSet().containsAll(Arrays.asList(1,2,3,4,5,6,7,8,9)) && !game.isGameOver()){
             Log.d(TAG, "draw conditions met, setting draw dialog");
+            game.setGameOver(true);
             EndGameDialogFragment dialog = new EndGameDialogFragment();
             dialog.setCancelable(false);
             Bundle bundle = new Bundle();
@@ -210,7 +213,7 @@ public class PlayGameActivity extends AppCompatActivity {
         Log.d(TAG, "checking is tile selected. Tile is: " + tileSelected);
         if(game.getGameTilesSelectedSet().contains(tileSelected)){
             Log.d(TAG, "tile already selected");
-         return false;
+            return false;
         }
         Log.d(TAG, "tile not selected yet");
         return true;
@@ -219,7 +222,7 @@ public class PlayGameActivity extends AppCompatActivity {
     private void checkForWinner() {
         Log.d(TAG, "checking for winner");
         String result = game.isThereAWinner();
-        if(result.equals("Player 1") || result.equals("Player 2")){
+        if(result.equals("Player 1") || result.equals("Player 2") || result.equals("Computer")){
             Log.d(TAG, "winner found - - : " + result);
             //Toast.makeText(getApplicationContext(), "Winner is: " + result, Toast.LENGTH_SHORT).show();
             EndGameDialogFragment dialog = new EndGameDialogFragment();
@@ -231,6 +234,9 @@ public class PlayGameActivity extends AppCompatActivity {
             }else if(game.isThereAWinner().equals("Player 2")){
                 Log.d(TAG, "setting player 2 as winner in bundle for dialog");
                 bundle.putString("result", "Player 2 wins!!");
+            }else if(game.isThereAWinner().equals("Computer")) {
+                Log.d(TAG, "setting computer as winner in bundle for dialog");
+                bundle.putString("result", "Computer wins!!");
             }
             highLightWinningTiles();
             Log.d(TAG, "show winner dialog");
