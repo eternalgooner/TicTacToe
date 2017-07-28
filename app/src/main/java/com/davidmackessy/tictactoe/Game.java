@@ -100,7 +100,6 @@ public class Game implements Serializable{
         }
         return false;
     }
-    //TODO when computer wins it doesn't highlight the tiles & also if draw, game crashes
     public boolean computerGo(){
         Log.d(TAG, "in computerGo(), isGameOver = " + isGameOver);
         simulateDelay();
@@ -128,7 +127,8 @@ public class Game implements Serializable{
             @Override
             public void run() {
                 //do nothing, simulate 2 seconds
-            }
+                //returnToMain();
+            }//TODO fix delay
         }, 2000);
         Log.d(TAG, "leaving simulateDelay()");
     }

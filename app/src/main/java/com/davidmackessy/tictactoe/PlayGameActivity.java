@@ -1,11 +1,16 @@
 package com.davidmackessy.tictactoe;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -16,7 +21,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-public class PlayGameActivity extends AppCompatActivity {
+public class PlayGameActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener{
 
     private int gameType;
     private static final int ONE_PLAYER = 1;
@@ -52,6 +57,7 @@ public class PlayGameActivity extends AppCompatActivity {
         assignCardViews();
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
+        setupSharedPreferences();
         gameType = getIntent().getIntExtra("gameType", 0);
         Toast.makeText(getApplicationContext(), "Game type is: " + gameType, Toast.LENGTH_SHORT).show();
        if(savedInstanceState == null){
@@ -160,8 +166,13 @@ public class PlayGameActivity extends AppCompatActivity {
     }
 
     public boolean onOptionsItemSelected(MenuItem item){
+        int menuItem = item.getItemId();
+        if(menuItem == R.id.menu_pref){
+            showPreferencesScreen();
+            return true;
+        }
         finish();
-        return true;
+        return super.onOptionsItemSelected(item);
     }
 
     private void addClickListener(ImageView tile) {
@@ -263,6 +274,16 @@ public class PlayGameActivity extends AppCompatActivity {
             Log.d(TAG, "highlight player 2 tiles");
             if(game.getPlayerTwoTileSet().size() == 3){
                 Log.d(TAG, "highlight player 2 tiles = 3");
+                for(int tile : game.getPlayerTwoTileSet()){
+                    setBackgroundColourOnTile(tile);
+                }
+            }else{
+                highLightTilesIfMoreThan3(2);
+            }
+        }else if(game.isThereAWinner().equals("Computer")){
+            Log.d(TAG, "highlight computer tiles");
+            if(game.getPlayerTwoTileSet().size() == 3){
+                Log.d(TAG, "highlight computer tiles = 3");
                 for(int tile : game.getPlayerTwoTileSet()){
                     setBackgroundColourOnTile(tile);
                 }
@@ -417,5 +438,49 @@ public class PlayGameActivity extends AppCompatActivity {
         }else{
             return getDrawable(R.drawable._x);
         }
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if(key.equals("computerLevel")){
+            String computerLevel = sharedPreferences.getString(key, "rock hard");
+            //if showing computer level then show here
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_preferences, menu);
+        return true;
+    }
+
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        int menuItem = item.getItemId();
+//        if(menuItem == R.id.menu_pref){
+//            showPreferencesScreen();
+//            return true;
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
+
+    private void showPreferencesScreen(){
+        Context context = PlayGameActivity.this;
+        Intent intent = new Intent(context, PreferencesActivity.class);
+        startActivity(intent);
+    }
+
+    private void setupSharedPreferences() {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        String computerLevel = sp.getString("computerLevel", "rock hard");
+        //if showing computer level then show here
+
+        sp.registerOnSharedPreferenceChangeListener(this);
     }
 }
