@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ListPreference
+        android:defaultValue="computer level"
+        android:entries="@array/computer_level"
+        android:entryValues="@array/computer_levels"
+        android:key="computer_level"
+        android:title="Computer Level"
+        android:summary="choose the computer difficulty level"/>
+</PreferenceScreen>
