@@ -21,7 +21,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-public class PlayGameActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener{
+public class PlayGameActivity extends AppCompatActivity{
 
     private int gameType;
     private static final int ONE_PLAYER = 1;
@@ -57,9 +57,9 @@ public class PlayGameActivity extends AppCompatActivity implements SharedPrefere
         assignCardViews();
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-        setupSharedPreferences();
+        //setupSharedPreferences();
         gameType = getIntent().getIntExtra("gameType", 0);
-        Toast.makeText(getApplicationContext(), "Game type is: " + gameType, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), "Game type is: " + gameType, Toast.LENGTH_SHORT).show();
        if(savedInstanceState == null){
            startGame(gameType);
        }else{
@@ -165,15 +165,15 @@ public class PlayGameActivity extends AppCompatActivity implements SharedPrefere
         game = new Game(TWO_PLAYER);
     }
 
-    public boolean onOptionsItemSelected(MenuItem item){
-        int menuItem = item.getItemId();
-        if(menuItem == R.id.menu_pref){
-            showPreferencesScreen();
-            return true;
-        }
-        finish();
-        return super.onOptionsItemSelected(item);
-    }
+//    public boolean onOptionsItemSelected(MenuItem item){
+//        int menuItem = item.getItemId();
+//        if(menuItem == R.id.menu_pref){
+//            showPreferencesScreen();
+//            return true;
+//        }
+//        finish();
+//        return super.onOptionsItemSelected(item);
+//    }
 
     private void addClickListener(ImageView tile) {
         tile.setOnClickListener(new View.OnClickListener() {
@@ -186,7 +186,7 @@ public class PlayGameActivity extends AppCompatActivity implements SharedPrefere
                     checkForWinner();
                     checkIfDraw();
                     if(gameType == 1 && !game.isGameOver()){
-                        if(game.computerGo()){
+                        if(game.computerGo(getApplicationContext())){
                             isPlayerOneGo = true;
                             setShapeOnTile(getCorrectPlayerTile(game.getLastComputerChoice()));
                             checkForWinner();
@@ -440,25 +440,25 @@ public class PlayGameActivity extends AppCompatActivity implements SharedPrefere
         }
     }
 
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if(key.equals("computerLevel")){
-            String computerLevel = sharedPreferences.getString(key, "rock hard");
-            //if showing computer level then show here
-        }
-    }
+//    @Override
+//    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+//        if(key.equals("computerLevel")){
+//            String computerLevel = sharedPreferences.getString(key, "rock hard");
+//            //if showing computer level then show here
+//        }
+//    }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
-    }
+//    @Override
+//    protected void onDestroy() {
+//        super.onDestroy();
+//        PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
+//    }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_preferences, menu);
-        return true;
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.menu_preferences, menu);
+//        return true;
+//    }
 
 //    @Override
 //    public boolean onOptionsItemSelected(MenuItem item) {
@@ -470,17 +470,17 @@ public class PlayGameActivity extends AppCompatActivity implements SharedPrefere
 //        return super.onOptionsItemSelected(item);
 //    }
 
-    private void showPreferencesScreen(){
-        Context context = PlayGameActivity.this;
-        Intent intent = new Intent(context, PreferencesActivity.class);
-        startActivity(intent);
-    }
+//    private void showPreferencesScreen(){
+//        Context context = PlayGameActivity.this;
+//        Intent intent = new Intent(context, PreferencesActivity.class);
+//        startActivity(intent);
+//    }
 
-    private void setupSharedPreferences() {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        String computerLevel = sp.getString("computerLevel", "rock hard");
-        //if showing computer level then show here
-
-        sp.registerOnSharedPreferenceChangeListener(this);
-    }
+//    private void setupSharedPreferences() {
+//        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+//        String computerLevel = sp.getString("computerLevel", "rock hard");
+//        //if showing computer level then show here
+//
+//        sp.registerOnSharedPreferenceChangeListener(this);
+//    }
 }

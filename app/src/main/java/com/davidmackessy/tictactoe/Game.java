@@ -1,6 +1,9 @@
 package com.davidmackessy.tictactoe;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import java.io.Serializable;
@@ -100,10 +103,10 @@ public class Game implements Serializable{
         }
         return false;
     }
-    public boolean computerGo(){
+    public boolean computerGo(Context context){
         Log.d(TAG, "in computerGo(), isGameOver = " + isGameOver);
         simulateDelay();
-        int randomChoice = getNextComputerChoice();
+        int randomChoice = getNextComputerChoice(context);
         lastComputerChoice = randomChoice;
         justPlayed = JustPlayed.COMPUTER;
         if(playerTwoTileSet.contains(randomChoice)){
@@ -133,16 +136,24 @@ public class Game implements Serializable{
         Log.d(TAG, "leaving simulateDelay()");
     }
 
-    private int getNextComputerChoice() {
+    private int getNextComputerChoice(Context context) {
         Log.d(TAG, "in getNextComputerChoice");
-//        Random random = new Random();
-//        int randomInt = random.nextInt(gameTilesLeft.size());
-//        int returningInt =  getRandomIntFromRemaingInts(randomInt);
-//        Log.d(TAG, "in getNextComputerChoice, returning number: " + returningInt);
-//        return  returningInt;
-//       int chosenInt = ComputerChoiceAlgorithm.getComputerChoiceOnEasyLevel(gameTilesLeft);
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        String computerLevel = sp.getString("computer_level", "rock hard");
+        Log.d(TAG, "computer level from shared preferences is: " + computerLevel);
+        int chosenInt = -1;
+        if(computerLevel.equals("easy")){
+            chosenInt = ComputerChoiceAlgorithm.getComputerChoiceOnEasyLevel(gameTilesLeft);
+        }else if(computerLevel.equals("medium")){
+            chosenInt = ComputerChoiceAlgorithm.getComputerChoiceOnMediumLevel(gameTilesLeft, playerOneTileSet, getWinningCombinations(), 2);
+        }else if(computerLevel.equals("hard")){
+            chosenInt = ComputerChoiceAlgorithm.getComputerChoiceOnHardLevel(this, 3);
+        }else{
+            Log.e(TAG, " ERROR: shouldn't be here - no shared preferences match for computer level");
+        }
+        //int chosenInt = ComputerChoiceAlgorithm.getComputerChoiceOnEasyLevel(gameTilesLeft);
         //int chosenInt = ComputerChoiceAlgorithm.getComputerChoiceOnMediumLevel(gameTilesLeft, playerOneTileSet, getWinningCombinations(), 2);
-        int chosenInt = ComputerChoiceAlgorithm.getComputerChoiceOnHardLevel(this, 3);
+        //int chosenInt = ComputerChoiceAlgorithm.getComputerChoiceOnHardLevel(this, 3);
         Log.d(TAG, "in getNextComputerChoice(), returning: " + chosenInt);
         return chosenInt;
     }

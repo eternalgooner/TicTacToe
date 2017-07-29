@@ -20,5 +20,6 @@ public class PreferencesActivity extends AppCompatActivity{
         if(actionBar != null){
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+        actionBar.setDisplayHomeAsUpEnabled(true);
     }
 }
