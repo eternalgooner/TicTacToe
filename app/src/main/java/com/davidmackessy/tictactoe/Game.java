@@ -134,12 +134,16 @@ public class Game implements Serializable{
     }
 
     private int getNextComputerChoice() {
+        Log.d(TAG, "in getNextComputerChoice");
 //        Random random = new Random();
 //        int randomInt = random.nextInt(gameTilesLeft.size());
 //        int returningInt =  getRandomIntFromRemaingInts(randomInt);
 //        Log.d(TAG, "in getNextComputerChoice, returning number: " + returningInt);
 //        return  returningInt;
-        return ComputerChoiceAlgorithm.getComputerChoiceOnEasyLevel(gameTilesLeft);
+//        return ComputerChoiceAlgorithm.getComputerChoiceOnEasyLevel(gameTilesLeft);
+        int chosenInt = ComputerChoiceAlgorithm.getComputerChoiceOnMediumLevel(gameTilesLeft, playerOneTileSet, getWinningCombinations());
+        Log.d(TAG, "in getNextComputerChoice(), returning: " + chosenInt);
+        return chosenInt;
     }
 
     private int getRandomIntFromRemaingInts(int randomInt) {
