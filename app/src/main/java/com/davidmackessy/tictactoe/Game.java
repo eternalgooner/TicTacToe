@@ -140,8 +140,9 @@ public class Game implements Serializable{
 //        int returningInt =  getRandomIntFromRemaingInts(randomInt);
 //        Log.d(TAG, "in getNextComputerChoice, returning number: " + returningInt);
 //        return  returningInt;
-//        return ComputerChoiceAlgorithm.getComputerChoiceOnEasyLevel(gameTilesLeft);
-        int chosenInt = ComputerChoiceAlgorithm.getComputerChoiceOnMediumLevel(gameTilesLeft, playerOneTileSet, getWinningCombinations());
+//       int chosenInt = ComputerChoiceAlgorithm.getComputerChoiceOnEasyLevel(gameTilesLeft);
+        //int chosenInt = ComputerChoiceAlgorithm.getComputerChoiceOnMediumLevel(gameTilesLeft, playerOneTileSet, getWinningCombinations(), 2);
+        int chosenInt = ComputerChoiceAlgorithm.getComputerChoiceOnHardLevel(this, 3);
         Log.d(TAG, "in getNextComputerChoice(), returning: " + chosenInt);
         return chosenInt;
     }
@@ -257,5 +258,9 @@ public class Game implements Serializable{
 
     public void setGameOver(boolean gameOver) {
         isGameOver = gameOver;
+    }
+
+    public Set<Integer> getGameTilesLeft() {
+        return gameTilesLeft;
     }
 }
