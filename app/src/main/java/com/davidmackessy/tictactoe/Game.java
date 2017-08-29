@@ -103,6 +103,7 @@ public class Game implements Serializable{
         }
         return false;
     }
+    
     public boolean computerGo(Context context){
         Log.d(TAG, "in computerGo(), isGameOver = " + isGameOver);
         simulateDelay();
